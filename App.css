@@ -1,0 +1,119 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  background-color: #fff;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+}
+.App .media-library-header {
+  position: fixed;
+  top: 0;
+  background-color: #fff;
+  width: 100%;
+  left: 0;
+  z-index: 100000;
+  box-shadow: 0px 2px 30px -2px rgba(0, 0, 0, 0.75);
+}
+.App .media-library-header input {
+  height: -moz-fit-content;
+  height: fit-content;
+}
+
+.portal {
+  background-color: #fff;
+  display: grid;
+}
+.portal.w-sidebar {
+  grid-template-columns: 70% 30%;
+}
+.portal.w-footer {
+  grid-template-rows: 1fr 20vh;
+}
+.portal .media-grid {
+  width: 100%;
+  display: grid;
+  grid-column-gap: 1em;
+  grid-row-gap: 1em;
+  list-style: none;
+  margin: 100px 0;
+  padding: 0 5px;
+}
+.portal .media-grid li {
+  aspect-ratio: 1;
+  cursor: pointer;
+  overflow: hidden;
+  background: #ccc;
+}
+.portal .media-grid li img {
+  width: 100%;
+  height: 100%;
+}
+.portal .media-grid li.rect {
+  padding: 8px;
+}
+.portal .media-grid li.rect img {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.portal .media-grid li.sq img {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+.portal .media-grid li.selected {
+  border: 8px solid #6495ed;
+}
+.portal .media-grid li.current {
+  outline: #3c5a91 4px so;
+}
+.portal .sidebar {
+  margin: 100px 0;
+  background-color: #fff;
+  position: fixed;
+}
+.portal .sidebar .sidebar-thumb-area {
+  width: 100%;
+  padding: 10px;
+  background-color: #ccc;
+}
+.portal .sidebar .sidebar-thumb-area img {
+  width: 100%;
+  height: auto;
+  max-height: 25vh;
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+.portal .footer {
+  display: flex;
+}
+
+.control-panel {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.components-base-control {
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.footer-controls {
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #ddd;
+  width: 100%;
+  background-color: #fff;
+}
+.footer-controls .footer-toolbar {
+  gap: 1em;
+  display: flex;
+  align-items: center;
+  padding: 0 1em;
+}
+.footer-controls .thumb-range .components-range-control {
+  width: 200px;
+}

@@ -1,0 +1,9 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+#toplevel_page_new-media-library a,
+#toplevel_page_new-media-library div.wp-menu-image:before {
+	color: red;
+}

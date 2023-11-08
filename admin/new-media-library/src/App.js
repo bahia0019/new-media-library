@@ -189,7 +189,7 @@ function App() {
 
 		if ("" !== apertureFilter || undefined !== apertureFilter) {
 			const filteredData = media.filter((mediaItem) => {
-				return Object.values([mediaItem.media_details.image_meta.aperture])
+				return Object.values([mediaItem?.media_details?.image_meta?.aperture])
 					.join("")
 					.toLowerCase()
 					.includes(apertureFilter)
@@ -293,10 +293,10 @@ function App() {
 						<li
 							key={index}
 							onClick={currentPhotoSelect(mediaItem)}
-							className={(thumbRatio)}
+							className={thumbRatio}
 						>
 							<img
-								src={mediaItem.media_details.sizes.medium.source_url}
+								src={mediaItem?.media_details?.sizes?.medium?.source_url}
 								alt=""
 							/>
 						</li>
@@ -406,27 +406,55 @@ function App() {
 						label="Rectangle Thumbnails"
 						onClick={() => thumbnailSwitcher("rect")}
 					/>
-                    |
-                    <ToolbarButton
+					|
+					<ToolbarButton
 						icon={
 							<svg id="icon-sidebar" viewBox="0 0 32 32">
-                                <path fill="none" d="M0 0h32v32H0z"/>
-                                <path fill="none" d="M0 0h32v32H0z"/>
-                                <path fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="2" stroke-width="2" d="M0 0h32v32H0z" vector-effect="non-scaling-stroke"/>
-                                <path stroke="#000" stroke-linecap="square" stroke-miterlimit="3" d="M23 0v32" vector-effect="non-scaling-stroke"/>
-                            </svg>
+								<path fill="none" d="M0 0h32v32H0z" />
+								<path fill="none" d="M0 0h32v32H0z" />
+								<path
+									fill="none"
+									stroke="#000"
+									stroke-linecap="round"
+									stroke-miterlimit="2"
+									stroke-width="2"
+									d="M0 0h32v32H0z"
+									vector-effect="non-scaling-stroke"
+								/>
+								<path
+									stroke="#000"
+									stroke-linecap="square"
+									stroke-miterlimit="3"
+									d="M23 0v32"
+									vector-effect="non-scaling-stroke"
+								/>
+							</svg>
 						}
 						label="Sidebar"
 						onClick={() => console.log("sidebar")}
 					/>
-                    <ToolbarButton
+					<ToolbarButton
 						icon={
 							<svg id="icon-footer" viewBox="0 0 32 32">
-                                <path fill="none" d="M0 0h32v32H0z"/>
-                                <path fill="none" d="M0 0h32v32H0z"/>
-                                <path fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="2" stroke-width="2" d="M0 0h32v32H0z" vector-effect="non-scaling-stroke"/>
-                                <path stroke="#000" stroke-linecap="square" stroke-miterlimit="3" d="M0 23h32" vector-effect="non-scaling-stroke"/>
-                            </svg>
+								<path fill="none" d="M0 0h32v32H0z" />
+								<path fill="none" d="M0 0h32v32H0z" />
+								<path
+									fill="none"
+									stroke="#000"
+									stroke-linecap="round"
+									stroke-miterlimit="2"
+									stroke-width="2"
+									d="M0 0h32v32H0z"
+									vector-effect="non-scaling-stroke"
+								/>
+								<path
+									stroke="#000"
+									stroke-linecap="square"
+									stroke-miterlimit="3"
+									d="M0 23h32"
+									vector-effect="non-scaling-stroke"
+								/>
+							</svg>
 						}
 						label="Footer"
 						onClick={() => console.log("footer")}

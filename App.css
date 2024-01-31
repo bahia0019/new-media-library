@@ -15,10 +15,17 @@
   left: 0;
   z-index: 100000;
   box-shadow: 0px 2px 30px -2px rgba(0, 0, 0, 0.75);
+  display: flex;
+  height: 8em;
+  justify-content: space-between;
+  align-items: flex-end;
 }
 .App .media-library-header input {
   height: -moz-fit-content;
   height: fit-content;
+}
+.App .media-library-header .top-bar {
+  display: flex;
 }
 
 .portal {
@@ -71,6 +78,9 @@
   margin: 100px 0;
   background-color: #fff;
   position: fixed;
+  right: 0;
+  width: 30%;
+  height: 100%;
 }
 .portal .sidebar .sidebar-thumb-area {
   width: 100%;
@@ -116,4 +126,20 @@
 }
 .footer-controls .thumb-range .components-range-control {
   width: 200px;
+}
+
+.loaded {
+  width: 400px;
+  height: 300px;
+  background-color: red;
+  position: absolute;
+  bottom: 0;
+}
+
+.loading {
+  width: 200px;
+  height: 200px;
+  background-color: blue;
+  position: absolute;
+  bottom: 0;
 }

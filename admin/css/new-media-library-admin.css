@@ -7,3 +7,7 @@
 #toplevel_page_new-media-library div.wp-menu-image:before {
 	color: red;
 }
+
+.toplevel_page_partials-new-media-library-admin-display #wpbody {
+	position: unset;
+}

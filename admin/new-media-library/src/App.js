@@ -50,7 +50,10 @@ const useKeyPress = function (targetKey) {
 
 function App() {
 	const [media, setMedia] = useState([])
+	const [page, setPage] = useState(1)
+	const [queryFilters, setQueryFilters] = useState([])
 	const [loading, setLoading] = useState(false)
+	const [totalMedia, setTotalMedia] = useState(0)
 	const [searchInput, setSearchInput] = useState("")
 	const [filteredMedia, setFilteredMedia] = useState([])
 	const [currentMediaItem, setCurrentMediaItem] = useState([])
@@ -68,6 +71,11 @@ function App() {
 
 	const thumbnailSwitcher = (ratio) => {
 		setThumbRatio(ratio)
+	}
+
+	const updatePage = () => {
+		if (loading) return
+		setPage((prev) => prev + 1)
 	}
 
 	/**
@@ -120,6 +128,17 @@ function App() {
 		}
 	}, [shiftPress])
 
+	// const updateFilters = (mediaTypeFilter) => {
+	// 	setMedia([])
+	// 	setTotalMedia(0)
+	// 	setQueryFilters((queryFilters) => [
+	// 		...queryFilters,
+	// 		{ media_type: mediaTypeFilter },
+	// 	])
+	// 	console.log(queryFilters)
+	// 	console.log(mediaTypeFilter)
+	// }
+
 	const currentPhotoSelect = (mediaItem) => (e) => {
 		setCurrentMediaItem(mediaItem)
 
@@ -149,33 +168,35 @@ function App() {
 		}
 	}
 
-	useEffect(() => {
-		console.log(currentMediaItem)
-		console.log(selectedMedia)
-	}, [selectedMedia, currentMediaItem])
-
 	/**
 	 * API Call
 	 */
 
 	useEffect(() => {
+		setLoading(true)
 		axios
-			.get(`${siteURL}/wp-json/wp/v2/media?per_page=100`)
+			.get(
+				`${siteURL}/wp-json/wp/v2/media?page=${page}&per_page=50&${
+					mediaTypeFilter ? `media_type=${mediaTypeFilter}` : ""
+				}`
+			)
 			.then((response) => {
-				setMedia(response.data)
+				setMedia((prev) => [...prev, ...response.data])
+				setTotalMedia(response.headers.get("x-wp-total"))
 			})
 			.catch(function (error) {})
-	}, [])
+		setLoading(false)
+	}, [page, mediaTypeFilter])
 
 	useEffect(() => {
 		// if ("" !== mediaTypeFilter || undefined !== mediaTypeFilter) {
-		// 	const filteredData = media.filter((image) => {
-		// 		return Object.values([mediaItem.media_type])
-		// 			.join("")
-		// 			.toLowerCase()
-		// 			.includes(mediaTypeFilter.toLowerCase())
-		// 	})
-		// 	setFilteredMedia(filteredData)
+		// const filteredData = media.filter((image) => {
+		// 	return Object.values([mediaItem.media_type])
+		// 		.join("")
+		// 		.toLowerCase()
+		// 		.includes(mediaTypeFilter.toLowerCase())
+		// })
+		// setFilteredMedia(filteredData)
 		// }
 		// if ("" !== keywordFilter || undefined !== keywordFilter) {
 		// 	const filteredData = media.filter((image) => {
@@ -214,7 +235,29 @@ function App() {
 		<div className="App">
 			<header class="media-library-header">
 				<div class="top-bar">
-					<button className="modal-button">X</button>
+					<div class="edit-site-site-hub__view-mode-toggle-container">
+						<a
+							href="index.php"
+							class="components-button edit-site-layout__view-mode-toggle"
+							aria-label="Go to the Dashboard"
+						>
+							<div>
+								<div class="edit-site-layout__view-mode-toggle-icon edit-site-site-icon">
+									<svg
+										xmlns="http://www.w3.org/2000/svg"
+										viewBox="-2 -2 24 24"
+										width="48px"
+										height="48px"
+										class="edit-site-site-icon__icon"
+										aria-hidden="true"
+										focusable="false"
+									>
+										<path d="M20 10c0-5.51-4.49-10-10-10C4.48 0 0 4.49 0 10c0 5.52 4.48 10 10 10 5.51 0 10-4.48 10-10zM7.78 15.37L4.37 6.22c.55-.02 1.17-.08 1.17-.08.5-.06.44-1.13-.06-1.11 0 0-1.45.11-2.37.11-.18 0-.37 0-.58-.01C4.12 2.69 6.87 1.11 10 1.11c2.33 0 4.45.87 6.05 2.34-.68-.11-1.65.39-1.65 1.58 0 .74.45 1.36.9 2.1.35.61.55 1.36.55 2.46 0 1.49-1.4 5-1.4 5l-3.03-8.37c.54-.02.82-.17.82-.17.5-.05.44-1.25-.06-1.22 0 0-1.44.12-2.38.12-.87 0-2.33-.12-2.33-.12-.5-.03-.56 1.2-.06 1.22l.92.08 1.26 3.41zM17.41 10c.24-.64.74-1.87.43-4.25.7 1.29 1.05 2.71 1.05 4.25 0 3.29-1.73 6.24-4.4 7.78.97-2.59 1.94-5.2 2.92-7.78zM6.1 18.09C3.12 16.65 1.11 13.53 1.11 10c0-1.3.23-2.48.72-3.59C3.25 10.3 4.67 14.2 6.1 18.09zm4.03-6.63l2.58 6.98c-.86.29-1.76.45-2.71.45-.79 0-1.57-.11-2.29-.33.81-2.38 1.62-4.74 2.42-7.1z"></path>
+									</svg>
+								</div>
+							</div>
+						</a>
+					</div>
 					<h1>New Media Library</h1>
 				</div>
 				<div className="control-panel">
@@ -229,7 +272,6 @@ function App() {
 							{ label: "Application", value: "application" },
 							{ label: "Audio", value: "audio" },
 						]}
-						onChange={(mediaTypes) => setMediaTypeFilter(mediaTypes)}
 					></SelectControl>
 
 					<SelectControl
@@ -299,6 +341,8 @@ function App() {
 								src={mediaItem?.media_details?.sizes?.medium?.source_url}
 								alt=""
 							/>
+							<p>{mediaItem?.media_type}</p>
+							<p>{mediaItem?.media_details?.mime_type}</p>
 						</li>
 					))}
 				</ul>
@@ -462,8 +506,10 @@ function App() {
 				</Toolbar>
 
 				<div style={{ display: "flex", flexDirection: "column" }}>
-					<span>Showing XX of XXXX media items</span>
-					<button>Load More</button>
+					<span>
+						Showing {media.length} of {totalMedia} media items
+					</span>
+					<button onClick={updatePage}>Load More</button>
 				</div>
 				<div class="thumb-range">
 					<RangeControl

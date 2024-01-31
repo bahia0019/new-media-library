@@ -98,20 +98,11 @@ class New_Media_Library_Admin {
 }
 
 
-function wporg_options_page() {
-    add_menu_page(
-        'New Media Library',
-        'New Media Library',
-        'manage_options',
-        'new-media-library',
-        null,
-        'dashicons-admin-media',
-        5
-    );
+function my_admin_menu() {
+    add_menu_page( 'New Media Library', 'New Media Library', 'manage_options', 'partials/new-media-library-admin-display.php', 'new_media_library_admin_page', 'dashicons-admin-media', 5  );
 }
-add_action( 'admin_menu', 'wporg_options_page' );
+add_action( 'admin_menu', 'my_admin_menu' );
 
-function add_root() {
-	echo '<div id="root"></div>';
+function new_media_library_admin_page() {
+	echo '<div class="wrap" id="wp-new-media-grid"><h2>Media Library!</h2></div>';
 }
-add_action( 'admin_head', 'add_root' );

@@ -60,6 +60,8 @@ function App() {
 	const [selectedMedia, setSelectedMedia] = useState([])
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [mediaTypeFilter, setMediaTypeFilter] = useState("")
+	const [focalLengthFilter, setFocalLengthFilter] = useState("")
+	const [cameraFilter, setCameraFilter] = useState("")
 	const [keywordFilter, setKeywordFilter] = useState("")
 	const [apertureFilter, setApertureFilter] = useState("")
 	const [columns, setColumns] = useState(8)
@@ -129,14 +131,7 @@ function App() {
 	}, [shiftPress])
 
 	// const updateFilters = (mediaTypeFilter) => {
-	// 	setMedia([])
-	// 	setTotalMedia(0)
-	// 	setQueryFilters((queryFilters) => [
-	// 		...queryFilters,
-	// 		{ media_type: mediaTypeFilter },
-	// 	])
-	// 	console.log(queryFilters)
-	// 	console.log(mediaTypeFilter)
+
 	// }
 
 	const currentPhotoSelect = (mediaItem) => (e) => {
@@ -168,69 +163,41 @@ function App() {
 		}
 	}
 
-	/**
-	 * API Call
-	 */
-
 	useEffect(() => {
+		setMedia([])
+		setTotalMedia(0)
 		setLoading(true)
+		console.log(
+			`${siteURL}/wp-json/wp/v2/media?page=${page}&per_page=50${
+				mediaTypeFilter ? `&media_type=${mediaTypeFilter}` : ""
+			}${apertureFilter ? `&aperture=${apertureFilter}` : ""}${
+				focalLengthFilter ? `&focal_length=${focalLengthFilter}` : ""
+			}${cameraFilter ? `&camera=${cameraFilter}` : ""}`
+		)
 		axios
 			.get(
-				`${siteURL}/wp-json/wp/v2/media?page=${page}&per_page=50&${
-					mediaTypeFilter ? `media_type=${mediaTypeFilter}` : ""
-				}`
+				`${siteURL}/wp-json/wp/v2/media?page=${page}&per_page=50${
+					mediaTypeFilter ? `&media_type=${mediaTypeFilter}` : ""
+				}${apertureFilter ? `&aperture=${apertureFilter}` : ""}${
+					focalLengthFilter ? `&focal_length=${focalLengthFilter}` : ""
+				}${cameraFilter ? `&camera=${cameraFilter}` : ""}`
 			)
 			.then((response) => {
+				console.log(response)
 				setMedia((prev) => [...prev, ...response.data])
 				setTotalMedia(response.headers.get("x-wp-total"))
 			})
 			.catch(function (error) {})
 		setLoading(false)
-	}, [page, mediaTypeFilter])
+	}, [
+		page,
+		keywordFilter,
+		mediaTypeFilter,
+		apertureFilter,
+		focalLengthFilter,
+		cameraFilter,
+	])
 
-	useEffect(() => {
-		// if ("" !== mediaTypeFilter || undefined !== mediaTypeFilter) {
-		// const filteredData = media.filter((image) => {
-		// 	return Object.values([mediaItem.media_type])
-		// 		.join("")
-		// 		.toLowerCase()
-		// 		.includes(mediaTypeFilter.toLowerCase())
-		// })
-		// setFilteredMedia(filteredData)
-		// }
-		// if ("" !== keywordFilter || undefined !== keywordFilter) {
-		// 	const filteredData = media.filter((image) => {
-		// 		return Object.values([mediaItem.media_details.image_meta.keywords])
-		// 			.join("")
-		// 			.toLowerCase()
-		// 			.includes(keywordFilter.toLowerCase())
-		// 	})
-		// 	setFilteredMedia(filteredData)
-		// }
-
-		if ("" !== apertureFilter || undefined !== apertureFilter) {
-			const filteredData = media.filter((mediaItem) => {
-				return Object.values([mediaItem?.media_details?.image_meta?.aperture])
-					.join("")
-					.toLowerCase()
-					.includes(apertureFilter)
-			})
-			setFilteredMedia(filteredData)
-		}
-
-		// if ("" !== searchInput) {
-		// 	const filteredData = media.filter((image) => {
-		// 		return Object.values([
-		// 			mediaItem.title.rendered,
-		// 			mediaItem.media_details.image_meta?.caption,
-		// 		])
-		// 			.join("")
-		// 			.toLowerCase()
-		// 			.includes(searchInput.toLowerCase())
-		// 	})
-		// 	setFilteredMedia(filteredData)
-		// }
-	}, [media, mediaTypeFilter, keywordFilter, apertureFilter])
 	return (
 		<div className="App">
 			<header class="media-library-header">
@@ -272,6 +239,7 @@ function App() {
 							{ label: "Application", value: "application" },
 							{ label: "Audio", value: "audio" },
 						]}
+						onChange={(mediaType) => setMediaTypeFilter(mediaType)}
 					></SelectControl>
 
 					<SelectControl
@@ -292,12 +260,34 @@ function App() {
 						value={apertureFilter}
 						options={[
 							{ label: "Aperture", value: "", disabled: false },
-							{ label: "f/1.8", value: 1.8 },
-							{ label: "f/2", value: 2 },
-							{ label: "f/4", value: 4 },
-							{ label: "f/8", value: 8 },
+							{ label: "f/1.8", value: "1.8" },
+							{ label: "f/2", value: "2" },
+							{ label: "f/4", value: "4" },
+							{ label: "f/8", value: "8" },
 						]}
 						onChange={(aperture) => setApertureFilter(aperture)}
+					></SelectControl>
+					<SelectControl
+						label={"Focal Length"}
+						value={focalLengthFilter}
+						options={[
+							{ label: "Focal Length", value: "", disabled: false },
+							{ label: "35mm", value: "35" },
+							{ label: "50mm", value: "50" },
+							{ label: "85mm", value: "85" },
+							{ label: "100mm", value: "100" },
+						]}
+						onChange={(focalLength) => setFocalLengthFilter(focalLength)}
+					></SelectControl>
+					<SelectControl
+						label={"Camera"}
+						value={cameraFilter}
+						options={[
+							{ label: "Camera", value: "", disabled: false },
+							{ label: "NIKON D7100", value: "NIKON D7100" },
+							{ label: "Fuji X-T3", value: "X-T3" },
+						]}
+						onChange={(camera) => setCameraFilter(camera)}
 					></SelectControl>
 
 					<input

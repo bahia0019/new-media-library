@@ -101,3 +101,105 @@ class New_Media_Library_Public {
 	}
 
 }
+
+
+
+require_once plugin_dir_path( dirname( __FILE__ ) ) . '/includes/class-new-media-library-term-handler.php';
+
+    /**
+     * The "media_details" in the JSON API response (/wp-json/wp/v2/media) are stored
+     * as a serialized string in the database so we can't use "meta_query" to filter it.
+     *
+     * Instead, let's add the extra data (like the aperture) as a taxonomy term.
+     */
+
+    add_filter('wp_generate_attachment_metadata', function ($metadata, $attachment_id) {
+        
+        $child_term_ids = [];
+        // Get the aperture from the image meta data.
+
+            if ( $aperture = $metadata['image_meta']['aperture'] ?? false ) {
+                
+                $child_term_id = MediaFilter\TermHandler::create( 'aperture', $aperture);
+                $child_term_ids[] = $child_term_id; 
+            }
+
+            if ( $focal_length = $metadata['image_meta']['focal_length'] ?? false ) {
+
+                $child_term_id = MediaFilter\TermHandler::create( 'focal_length', $focal_length);
+                $child_term_ids[] = $child_term_id; 
+            }
+
+            
+            if ( $camera = $metadata['image_meta']['camera'] ?? false ) {
+
+                $child_term_id = MediaFilter\TermHandler::create( 'camera', $camera);
+                $child_term_ids[] = $child_term_id; 
+            }
+
+        wp_set_object_terms($attachment_id, $child_term_ids, 'attachment_meta');
+
+        return $metadata;
+    }, 10, 2);
+
+    /**
+     * Add aperture filter to REST API query if the query param is set.
+     *
+     * Example: /wp-json/wp/v2/media?aperture=7.1
+     * This will return all media with an aperture of 7.1 (assuming an image with that aperture exists).
+     */
+    add_filter('rest_attachment_query', function ($args, $request) {
+
+            if ($aperture = $request->get_param( 'aperture' )) {
+                $args['tax_query'] = [
+                    [
+                        'taxonomy' => 'attachment_meta',
+                        'field'    => 'name',
+                        'terms'    => $aperture,
+                    ]
+                ];
+            } 
+        return $args;
+    }, 10, 2);
+
+
+    add_filter('rest_attachment_query', function ($args, $request) {
+
+        if ($focal_length = $request->get_param( 'focal_length' )) {
+            $args['tax_query'] = [
+                [
+                    'taxonomy' => 'attachment_meta',
+                    'field'    => 'name',
+                    'terms'    => $focal_length,
+                ]
+            ];
+        } 
+        return $args;
+    }, 10, 2);
+
+
+    add_filter('rest_attachment_query', function ($args, $request) {
+        if ($camera = $request->get_param( 'camera' )) {
+            $args['tax_query'] = [
+                [
+                    'taxonomy' => 'attachment_meta',
+                    'field'    => 'name',
+                    'terms'    => $camera,
+                ]
+            ];
+        } 
+
+        return $args;
+    }, 10, 2);
+
+
+/**
+ * Register the a custom taxonomy for the "attachment" post type.
+ */
+add_action('init', function () {
+    register_taxonomy('attachment_meta', 'attachment', [
+        'label'        => 'Attachment Meta',
+        'public'       => true,
+        'hierarchical' => true,
+    ]);
+});
